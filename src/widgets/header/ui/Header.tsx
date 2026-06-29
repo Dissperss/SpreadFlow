@@ -1,8 +1,12 @@
 import { Link } from 'react-router-dom'
+import { LastUpdated } from '@/features/last-updated'
+import { useQuotesMetaStore } from '@/shared/lib/quotesMetaStore'
 import logo from '@/assets/images/spreadFlowV2.png'
 import styles from './Header.module.css'
 
 export const Header = () => {
+    const lastUpdated = useQuotesMetaStore((state) => state.lastUpdated)
+
     return (
         <header className={styles.header}>
             <div className={styles.header__inner}>
@@ -21,6 +25,8 @@ export const Header = () => {
                         placeholder="Search markets, tickers..."
                     />
                 </div>
+
+                <LastUpdated since={lastUpdated ?? undefined} />
 
                 <div className={styles.header__actions}>
                     <button type="button" className={styles.header__icon_btn} aria-label="Notifications">

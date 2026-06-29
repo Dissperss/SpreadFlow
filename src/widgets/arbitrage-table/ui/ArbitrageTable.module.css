@@ -116,3 +116,19 @@
     background: rgba(139, 141, 154, 0.1);
     color: var(--color-text-secondary);
 }
+
+.status,
+.status_error,
+.empty {
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.status_error {
+    color: #ef4444;
+}
+
+.empty {
+    text-align: center;
+    color: var(--color-text-secondary);
+}
