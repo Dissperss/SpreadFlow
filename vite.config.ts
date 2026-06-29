@@ -15,5 +15,12 @@ export default defineConfig({
     },
     server: {
         port: 3000,
+        proxy: {
+            '/api/moex': {
+                target: 'https://iss.moex.com/iss',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/api\/moex/, ''),
+            },
+        },
     },
 });

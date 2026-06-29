@@ -1,12 +1,60 @@
-.table_section {
-    padding-bottom: 48px;
+.page {
+    padding: 24px 32px 48px;
 }
 
-.table_title {
+.header {
+    margin-bottom: 24px;
+}
+
+.title {
+    margin: 0 0 8px;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.subtitle {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 14px;
+}
+
+.status,
+.error {
+    font-size: 14px;
+}
+
+.error {
+    color: #ef4444;
+}
+
+.groups {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.group_title {
+    margin: 0;
     font-size: 18px;
     font-weight: 600;
-    color: var(--color-text);
-    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.group_code {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    padding: 2px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
 }
 
 .table_wrapper {
@@ -39,7 +87,6 @@
 
 .table td {
     padding: 12px 16px;
-    color: var(--color-text);
     border-bottom: 1px solid var(--color-border);
     white-space: nowrap;
 }
@@ -52,32 +99,25 @@
     background: var(--color-surface-hover);
 }
 
-.ticker_cell {
+.contract {
     font-weight: 600;
     color: var(--color-primary);
 }
 
-.spread_positive {
+.positive {
     color: #22c55e;
 }
 
-.spread_negative {
+.negative {
     color: #ef4444;
 }
 
-.profit_positive {
-    color: #22c55e;
-}
-
-.profit_negative {
-    color: #ef4444;
-}
-
-.liquidity {
+.liquidity,
+.signal {
     font-size: 12px;
-    padding: 2px 8px;
+    font-weight: 600;
+    padding: 3px 10px;
     border-radius: 4px;
-    font-weight: 500;
 }
 
 .liquidity_high {
@@ -95,13 +135,6 @@
     color: #ef4444;
 }
 
-.signal {
-    font-size: 12px;
-    font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 4px;
-}
-
 .signal_buy {
     background: rgba(34, 197, 94, 0.1);
     color: #22c55e;
@@ -114,21 +147,5 @@
 
 .signal_neutral {
     background: rgba(139, 141, 154, 0.1);
-    color: var(--color-text-secondary);
-}
-
-.status,
-.status_error,
-.empty {
-    font-size: 14px;
-    margin-bottom: 12px;
-}
-
-.status_error {
-    color: #ef4444;
-}
-
-.empty {
-    text-align: center;
     color: var(--color-text-secondary);
 }
