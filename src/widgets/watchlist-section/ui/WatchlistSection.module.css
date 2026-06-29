@@ -1,0 +1,71 @@
+.watchlist_section {
+    padding-bottom: 48px;
+}
+
+.watchlist_title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 16px;
+}
+
+.watchlist_grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.watchlist_card {
+    flex: 1;
+    min-width: 160px;
+    max-width: 200px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.watchlist_card_top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.watchlist_ticker {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.watchlist_market {
+    font-size: 11px;
+    color: var(--color-text-muted);
+}
+
+.watchlist_card_bottom {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.watchlist_price {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.watchlist_change {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.change_positive {
+    color: #22c55e;
+}
+
+.change_negative {
+    color: #ef4444;
+}

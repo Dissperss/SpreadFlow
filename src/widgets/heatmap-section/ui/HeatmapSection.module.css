@@ -1,0 +1,39 @@
+.heatmap_section {
+    padding-bottom: 48px;
+}
+
+.heatmap_title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 16px;
+}
+
+.heatmap_grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.heatmap_cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 24px 16px;
+    border-radius: var(--radius-md);
+    min-height: 80px;
+}
+
+.heatmap_sector {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.heatmap_change {
+    font-size: 15px;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.8);
+}
