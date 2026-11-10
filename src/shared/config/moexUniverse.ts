@@ -13,6 +13,9 @@ export const STOCK_FUTURES_UNIVERSE: MoexUniverseItem[] = [
     { spotSecid: 'NVTK', assetCode: 'NOTKM', label: 'Novatek' },
     { spotSecid: 'TATN', assetCode: 'TATN', label: 'Tatneft' },
     { spotSecid: 'MGNT', assetCode: 'MGNT', label: 'Magnit' },
+    { spotSecid: 'YDEX', assetCode: 'YDEX', label: 'Yandex' },
+    { spotSecid: 'OZON', assetCode: 'OZON', label: 'Ozon Holdings' },
+    { spotSecid: 'X5', assetCode: 'X5', label: 'X5 Group' },
 ]
 
 export const CALENDAR_SPREAD_UNIVERSE: MoexUniverseItem[] = [
