@@ -20,7 +20,7 @@ export const useStockFuturesArb = () =>
             return data
         },
         refetchInterval: REFETCH_INTERVAL,
-        staleTime: 10_000,
+        staleTime: 10_000, //сколько времени данные считаются свежими
     })
 
 export const useCalendarSpreads = () =>

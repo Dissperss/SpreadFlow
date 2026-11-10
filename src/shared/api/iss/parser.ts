@@ -34,5 +34,8 @@ export const daysUntil = (dateStr: string): number => {
     const now = new Date()
     now.setHours(0, 0, 0, 0)
     target.setHours(0, 0, 0, 0)
-    return Math.max(0, Math.ceil((target.getTime() - now.getTime()) / 86_400_000))
+    return Math.max(
+        0,
+        Math.ceil((target.getTime() - now.getTime()) / 86_400_000),
+    )
 }
