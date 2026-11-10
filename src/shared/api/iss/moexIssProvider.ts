@@ -1,9 +1,6 @@
 import type { FutureContract, SpotInstrument } from '@/entities/instrument'
 import type { ArbSignal, CalendarSpread } from '@/entities/spread'
-import {
-    buildCalendarSpread,
-    buildCashAndCarrySignal,
-} from '@/entities/spread'
+import { buildCalendarSpread, buildCashAndCarrySignal } from '@/entities/spread'
 import {
     CALENDAR_SPREAD_UNIVERSE,
     STOCK_FUTURES_UNIVERSE,
@@ -59,7 +56,7 @@ const fetchFortsSecurities = async (): Promise<FutureContract[]> => {
                 'iss.meta': 'off',
                 'iss.only': 'securities,marketdata',
                 'securities.columns':
-                    'SECID,SHORTNAME,ASSETCODE,LASTDELDATE,LOTSIZE,MINSTEP',
+                    'SECID,SHORTNAME,ASSETCODE,LASTDELDATE,LOTVOLUME,MINSTEP',
                 'marketdata.columns': 'SECID,LAST,VOLTODAY,OPENPOSITION',
             },
         },
@@ -89,6 +86,8 @@ const fetchFortsSecurities = async (): Promise<FutureContract[]> => {
 
         const daysToExpiry = daysUntil(expirationDate)
         if (daysToExpiry <= 0) continue
+        const lotSize = parseNumber(row.LOTVOLUME)
+        if (!lotSize || lotSize <= 0) continue
 
         contracts.push({
             secid,
@@ -97,7 +96,7 @@ const fetchFortsSecurities = async (): Promise<FutureContract[]> => {
             assetCode: String(row.ASSETCODE ?? ''),
             expirationDate,
             daysToExpiry,
-            lotSize: parseNumber(row.LOTSIZE) ?? undefined,
+            lotSize,
             minStep: parseNumber(row.MINSTEP) ?? undefined,
             lastPrice: parseNumber(market?.LAST),
             volume: parseNumber(market?.VOLTODAY) ?? undefined,
@@ -113,7 +112,10 @@ const pickNearestFuture = (
     assetCode: string,
 ): FutureContract | undefined => {
     return contracts
-        .filter((contract) => contract.assetCode === assetCode)
+        .filter(
+            (contract) =>
+                contract.assetCode === assetCode && isTradableFuture(contract),
+        )
         .sort((a, b) => a.daysToExpiry - b.daysToExpiry)[0]
 }
 
@@ -122,13 +124,26 @@ const pickNearFarPair = (
     assetCode: string,
 ): [FutureContract, FutureContract] | undefined => {
     const sorted = contracts
-        .filter((contract) => contract.assetCode === assetCode)
+        .filter(
+            (contract) =>
+                contract.assetCode === assetCode && isTradableFuture(contract),
+        )
         .sort((a, b) => a.daysToExpiry - b.daysToExpiry)
 
     if (sorted.length < 2) return undefined
     return [sorted[0], sorted[1]]
 }
 
+function isTradableFuture(contract: FutureContract): boolean {
+    if (
+        contract.lastPrice !== null &&
+        contract.lastPrice > 0 &&
+        contract.lotSize > 0
+    )
+        return true
+
+    return false
+}
 const buildStockFuturesSignals = (
     universe: MoexUniverseItem[],
     spots: SpotInstrument[],
@@ -141,7 +156,8 @@ const buildStockFuturesSignals = (
             const spot = spotBySecid.get(item.spotSecid)
             const future = pickNearestFuture(futures, item.assetCode)
 
-            if (!spot?.lastPrice || !future?.lastPrice) return null
+            if (!spot?.lastPrice || !future?.lastPrice || future?.lotSize <= 0)
+                return null
 
             return buildCashAndCarrySignal(spot, future)
         })
@@ -157,12 +173,11 @@ const buildCalendarSpreadRows = (
             const pair = pickNearFarPair(futures, item.assetCode)
             if (!pair) return null
 
-            return buildCalendarSpread(
-                item.label,
-                item.assetCode,
-                pair[0],
-                pair[1],
-            )
+            const [near, far] = pair
+
+            if (near.lotSize !== far.lotSize) return null
+
+            return buildCalendarSpread(item.label, item.assetCode, near, far)
         })
         .filter((row): row is CalendarSpread => row !== null)
 
@@ -179,11 +194,7 @@ export const moexIssProvider: QuoteProvider = {
             fetchFortsSecurities(),
         ])
 
-        return buildStockFuturesSignals(
-            STOCK_FUTURES_UNIVERSE,
-            spots,
-            futures,
-        )
+        return buildStockFuturesSignals(STOCK_FUTURES_UNIVERSE, spots, futures)
     },
 
     async fetchCalendarSpreads() {
