@@ -2,7 +2,7 @@
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 16px;
-    padding: 0 0 48px;
+    padding: 48px 0;
 }
 
 .stats__card {
