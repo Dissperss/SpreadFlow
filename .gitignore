@@ -41,3 +41,8 @@ coverage
 # Files
 
 .pdf
+
+# Local AI project notes
+CHATGPT_PROJECT_INSTRUCTIONS.md
+PROJECT_BRIEF.md
+response.txt
