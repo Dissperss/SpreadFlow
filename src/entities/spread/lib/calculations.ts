@@ -1,10 +1,20 @@
 import type { FutureContract, SpotInstrument } from '@/entities/instrument'
-import type { ArbSignal, CalendarSpread, Liquidity, Signal } from '../model/types'
+import type {
+    ArbSignal,
+    CalendarSpread,
+    Liquidity,
+    Signal,
+} from '../model/types'
 
-const DEFAULT_REPO_RATE = 0.16
+const DEFAULT_REPO_RATE = 0.14 // Ключ.ставка на 11.11.2026
 const SIGNAL_THRESHOLD_PCT = 0.25
 
-export const getLiquidity = (openInterest?: number, volume?: number): Liquidity => {
+// Ликвидность
+
+export const getLiquidity = (
+    openInterest?: number,
+    volume?: number,
+): Liquidity => {
     const oi = openInterest ?? 0
     const vol = volume ?? 0
 
@@ -13,23 +23,28 @@ export const getLiquidity = (openInterest?: number, volume?: number): Liquidity 
     return 'Low'
 }
 
+// Справедливая цена фьючерса
+
 export const calcFairValue = (
     spot: number,
     daysToExpiry: number,
     repoRate = DEFAULT_REPO_RATE,
 ): number => spot * (1 + repoRate * (daysToExpiry / 365))
 
+// Ставка зашитая в фьючерс
+
 export const calcImpliedRepo = (
     spot: number,
     future: number,
     daysToExpiry: number,
 ): number => {
-    if (spot <= 0 || daysToExpiry <= 0) return 0
-    return ((future / spot - 1) * (365 / daysToExpiry)) * 100
+    if (spot <= 0) throw new Error('Spot price must be greater than 0')
+    if (daysToExpiry <= 0) throw new Error('Future had been already expired')
+    return (future / spot - 1) * (365 / daysToExpiry) * 100
 }
 
 export const calcSpreadPct = (spot: number, future: number): number => {
-    if (spot <= 0) return 0
+    if (spot <= 0) throw new Error('Spot price must be greater than 0')
     return ((future - spot) / spot) * 100
 }
 
@@ -38,9 +53,11 @@ export const calcExpectedProfit = (
     future: number,
     fairValue: number,
 ): number => {
-    if (spot <= 0) return 0
+    if (spot <= 0) throw new Error('Spot price must be greater than 0')
     return ((fairValue - future) / spot) * 100
 }
+
+// Генерация сигнала
 
 export const resolveSignal = (expectedProfit: number): Signal => {
     if (expectedProfit > SIGNAL_THRESHOLD_PCT) return 'buy'
@@ -56,10 +73,24 @@ export const buildCashAndCarrySignal = (
     const spot = spotInstrument.lastPrice ?? 0
     const future = futureContract.lastPrice ?? 0
     const daysToExpiry = futureContract.daysToExpiry
-    const fairValue = calcFairValue(spot, daysToExpiry, repoRate)
-    const spread = calcSpreadPct(spot, future)
-    const expectedProfit = calcExpectedProfit(spot, future, fairValue)
-    const impliedRepo = calcImpliedRepo(spot, future, daysToExpiry)
+    const spotPerContract =
+        spot > 0 && future > 0 && futureContract.lotSize > 0
+            ? spot * futureContract.lotSize
+            : 0
+    if (spotPerContract === 0)
+        throw new Error('Spot or future price must be greater than 0')
+    const fairValuePerContract = calcFairValue(
+        spotPerContract,
+        daysToExpiry,
+        repoRate,
+    )
+    const spread = calcSpreadPct(spotPerContract, future)
+    const expectedProfit = calcExpectedProfit(
+        spotPerContract,
+        future,
+        fairValuePerContract,
+    )
+    const impliedRepo = calcImpliedRepo(spotPerContract, future, daysToExpiry)
 
     return {
         ticker: spotInstrument.secid,
@@ -67,7 +98,8 @@ export const buildCashAndCarrySignal = (
         spot,
         future,
         spread,
-        fairValue,
+        lotSize: futureContract.lotSize,
+        fairValuePerContract,
         expectedProfit,
         impliedRepo,
         daysToExpiry,
@@ -90,14 +122,12 @@ export const buildCalendarSpread = (
     const nearPrice = near.lastPrice ?? 0
     const farPrice = far.lastPrice ?? 0
     const calendarSpread = farPrice - nearPrice
-    const calendarSpreadPct = nearPrice > 0 ? (calendarSpread / nearPrice) * 100 : 0
-    const daysBetween = Math.max(
-        1,
-        far.daysToExpiry - near.daysToExpiry,
-    )
+    const calendarSpreadPct =
+        nearPrice > 0 ? (calendarSpread / nearPrice) * 100 : 0
+    const daysBetween = Math.max(1, far.daysToExpiry - near.daysToExpiry)
     const rollYield =
         nearPrice > 0
-            ? ((farPrice / nearPrice - 1) * (365 / daysBetween)) * 100
+            ? (farPrice / nearPrice - 1) * (365 / daysBetween) * 100
             : 0
 
     const expectedProfit = -calendarSpreadPct

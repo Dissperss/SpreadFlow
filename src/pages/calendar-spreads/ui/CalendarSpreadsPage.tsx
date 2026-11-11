@@ -35,13 +35,19 @@ export const CalendarSpreadsPage = () => {
                     <p className={styles.subtitle}>
                         Near vs far FORTS contracts grouped by underlying asset
                     </p>
+                    <div className={styles.subtitle_text}>
+                        Все цены — ₽/контракт.
+                    </div>
                 </div>
             </header>
 
-            {isLoading && <p className={styles.status}>Loading calendar spreads...</p>}
+            {isLoading && (
+                <p className={styles.status}>Loading calendar spreads...</p>
+            )}
             {isError && (
                 <p className={styles.error}>
-                    Failed to load spreads: {error instanceof Error ? error.message : 'Unknown error'}
+                    Failed to load spreads:{' '}
+                    {error instanceof Error ? error.message : 'Unknown error'}
                 </p>
             )}
 
@@ -51,7 +57,9 @@ export const CalendarSpreadsPage = () => {
                         <section key={assetCode} className={styles.group}>
                             <h2 className={styles.group_title}>
                                 {rows[0]?.underlying ?? assetCode}
-                                <span className={styles.group_code}>{assetCode}</span>
+                                <span className={styles.group_code}>
+                                    {assetCode}
+                                </span>
                             </h2>
 
                             <div className={styles.table_wrapper}>
@@ -72,28 +80,65 @@ export const CalendarSpreadsPage = () => {
                                     </thead>
                                     <tbody>
                                         {rows.map((row) => (
-                                            <tr key={`${row.nearSecid}-${row.farSecid}`}>
-                                                <td className={styles.contract}>{row.nearSecid}</td>
-                                                <td className={styles.contract}>{row.farSecid}</td>
-                                                <td>{formatPrice(row.nearPrice)}</td>
-                                                <td>{formatPrice(row.farPrice)}</td>
-                                                <td className={row.calendarSpread >= 0 ? styles.positive : styles.negative}>
-                                                    {formatPrice(row.calendarSpread)}
+                                            <tr
+                                                key={`${row.nearSecid}-${row.farSecid}`}
+                                            >
+                                                <td className={styles.contract}>
+                                                    {row.nearSecid}
                                                 </td>
-                                                <td className={row.calendarSpreadPct >= 0 ? styles.positive : styles.negative}>
-                                                    {formatPct(row.calendarSpreadPct)}
+                                                <td className={styles.contract}>
+                                                    {row.farSecid}
                                                 </td>
-                                                <td className={row.rollYield >= 0 ? styles.positive : styles.negative}>
+                                                <td>
+                                                    {formatPrice(row.nearPrice)}
+                                                </td>
+                                                <td>
+                                                    {formatPrice(row.farPrice)}
+                                                </td>
+                                                <td
+                                                    className={
+                                                        row.calendarSpread >= 0
+                                                            ? styles.positive
+                                                            : styles.negative
+                                                    }
+                                                >
+                                                    {formatPrice(
+                                                        row.calendarSpread,
+                                                    )}
+                                                </td>
+                                                <td
+                                                    className={
+                                                        row.calendarSpreadPct >=
+                                                        0
+                                                            ? styles.positive
+                                                            : styles.negative
+                                                    }
+                                                >
+                                                    {formatPct(
+                                                        row.calendarSpreadPct,
+                                                    )}
+                                                </td>
+                                                <td
+                                                    className={
+                                                        row.rollYield >= 0
+                                                            ? styles.positive
+                                                            : styles.negative
+                                                    }
+                                                >
                                                     {formatPct(row.rollYield)}
                                                 </td>
                                                 <td>{row.daysBetween}</td>
                                                 <td>
-                                                    <span className={`${styles.liquidity} ${styles[`liquidity_${row.liquidity.toLowerCase()}`]}`}>
+                                                    <span
+                                                        className={`${styles.liquidity} ${styles[`liquidity_${row.liquidity.toLowerCase()}`]}`}
+                                                    >
                                                         {row.liquidity}
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <span className={`${styles.signal} ${styles[`signal_${row.signal}`]}`}>
+                                                    <span
+                                                        className={`${styles.signal} ${styles[`signal_${row.signal}`]}`}
+                                                    >
                                                         {row.signal.toUpperCase()}
                                                     </span>
                                                 </td>

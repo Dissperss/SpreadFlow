@@ -28,6 +28,7 @@ export const futureContractSchema = instrumentSchema.extend({
     assetCode: z.string(),
     expirationDate: z.string(),
     daysToExpiry: z.number(),
+    lotSize: z.number().positive(),
 })
 
 export const spotInstrumentSchema = instrumentSchema.extend({

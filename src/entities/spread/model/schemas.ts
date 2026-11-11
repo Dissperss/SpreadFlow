@@ -14,10 +14,11 @@ export const liquiditySchema = z.enum(['High', 'Medium', 'Low'])
 export const arbSignalSchema = z.object({
     ticker: z.string(),
     arbType: arbTypeSchema,
-    spot: z.number(),
-    future: z.number(),
+    spot: z.number(), // ₽ за акцию
+    future: z.number(), // ₽ за контракт
     spread: z.number(),
-    fairValue: z.number(),
+    fairValuePerContract: z.number(), // ₽ за контракт
+    lotSize: z.number().positive(), // акций в контракте
     expectedProfit: z.number(),
     impliedRepo: z.number().optional(),
     daysToExpiry: z.number().optional(),
