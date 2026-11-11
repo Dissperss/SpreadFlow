@@ -6,7 +6,14 @@
     font-size: 18px;
     font-weight: 600;
     color: var(--color-text);
-    margin-bottom: 16px;
+    margin-bottom: 8px;
+}
+
+.subtitle_text {
+    margin: 0 0 16px;
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    line-height: 1.5;
 }
 
 .table_wrapper {

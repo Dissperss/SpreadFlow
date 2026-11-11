@@ -12,7 +12,13 @@ export const ArbitrageTable = () => {
         <section className={styles.table_section}>
             <h2 className={styles.table_title}>Arbitrage Scanner</h2>
 
-            {isLoading && <p className={styles.status}>Loading MOEX spreads...</p>}
+            <div className={styles.subtitle_text}>
+                Цены: spot — ₽/акция; фьючерсы и fair value — ₽/контракт.
+            </div>
+
+            {isLoading && (
+                <p className={styles.status}>Loading MOEX spreads...</p>
+            )}
             {isError && (
                 <p className={styles.status_error}>
                     Failed to load spreads. Check dev server proxy to MOEX ISS.
@@ -49,7 +55,9 @@ export const ArbitrageTable = () => {
                                         {row.ticker}
                                     </td>
                                     <td>{row.spot.toLocaleString('ru-RU')}</td>
-                                    <td>{row.future.toLocaleString('ru-RU')}</td>
+                                    <td>
+                                        {row.future.toLocaleString('ru-RU')}
+                                    </td>
                                     <td
                                         className={
                                             row.spread >= 0
@@ -59,7 +67,11 @@ export const ArbitrageTable = () => {
                                     >
                                         {formatPct(row.spread)}
                                     </td>
-                                    <td>{row.fairValue.toLocaleString('ru-RU')}</td>
+                                    <td>
+                                        {row.fairValuePerContract.toLocaleString(
+                                            'ru-RU',
+                                        )}
+                                    </td>
                                     <td
                                         className={
                                             row.expectedProfit >= 0

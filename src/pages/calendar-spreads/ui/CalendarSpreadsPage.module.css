@@ -18,6 +18,13 @@
     font-size: 14px;
 }
 
+.subtitle_text {
+    margin: 8px 0 0;
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
 .status,
 .error {
     font-size: 14px;
